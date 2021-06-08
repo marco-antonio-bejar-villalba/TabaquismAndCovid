@@ -1,0 +1,74 @@
+---
+title: "COVID behaivor in smokers"
+author: "Marco Antonio Béjar Villalba"
+date: "1/6/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(data.table)
+library(dplyr)
+```
+
+# Introduction
+
+It is known that Tabaquism is closely related with a bigger probability of having respiratory deseases like lung cancer, diabetes, and chronic obstructive pulmonary disease (COPD), among many other deseases many of them causing a high mortality rate. Smoking is also elated with effects in pregnancy including difficulties in getting pregnancy, tissue damage in the unborn, and miscarriage.
+
+Is my intention clarify the impact in smoking with the lethality and hospitalization rate with COVID cases and verify if further clinic studies could be necesary in order to clarify what statistics could say.
+
+# Tabaquism in México
+
+The Encuesta Nacional de Consumo de Drogas, Alcohol y Tabaco 2016-2017^[https://encuestas.insp.mx/ena/encodat2017/reporte_encodat_tabaco_2016_2017.pdf] says that the prevalence of smoking people is around 17.6% (14.9 millions), 6.4 millions smoking daily and 11.1 occasionally. That means a big risk when we talk about comorbidities related to tabaquism. 
+
+As many countries México has tryied to stop the tabaquism pandemicsusing a wide range of measures including taxes, disuasive images and legends in the smoke paquages, etc.
+
+# Analysis
+
+The data for this analysis is from the "Secretaría de salud", this data is open and represents every case, suspicion or test made for COVID. First we need to make some cleaning in the data because when the data is taken sometimes the fact that some parameters (like tabaquism, hypertension, etc) are unknown. These data will be cut off. The data of date May the 31th of 2021 will be taken.
+
+```{r loadData, echo=TRUE, cache=TRUE}
+url.data<-"http://datosabiertos.salud.gob.mx/gobmx/salud/datos_abiertos/historicos/2021/05/datos_abiertos_covid19_31.05.2021.zip"
+
+file.data<-"CovidData.zip"
+
+download.file(url.data,file.data)
+
+unzip(file.data)
+
+data.covid<-fread("210531COVID19MEXICO.csv")
+invalidCases<-c(97,98,99)
+data.covid[EMBARAZO==97]$EMBARAZO<-2
+
+data.covid<-data.covid[CLASIFICACION_FINAL %in% c(1,2,3),]
+  
+data.covid <- data.covid %>% filter(! ASMA %in% invalidCases) %>%
+    filter(! OBESIDAD %in% invalidCases) %>%
+    filter(! DIABETES %in% invalidCases) %>%
+    filter(! EPOC %in% invalidCases) %>%
+    filter(! INMUSUPR %in% invalidCases) %>%
+    filter(! HIPERTENSION %in% invalidCases) %>%
+    filter(! CARDIOVASCULAR %in% invalidCases) %>%
+    filter(! TABAQUISMO %in% invalidCases) %>%
+    filter(! EMBARAZO %in% invalidCases) %>%
+    filter(! OTRA_COM %in% invalidCases) %>%
+    filter(! RENAL_CRONICA %in% invalidCases)
+
+data.covid<-mutate(data.covid,DECEASED=ifelse((FECHA_DEF=="9999-99-99"),0,1))
+```
+
+With the data we can get the general lethality of the COVID cases in México.
+
+```{r}
+
+total.cases<-nrow(data.covid)
+
+total.deceased<- nrow(data.covid[DECEASED==1,])
+
+general.lethality.rate<-total.deceased*100/total.cases
+
+general.lethality.rate
+```
+
+
+

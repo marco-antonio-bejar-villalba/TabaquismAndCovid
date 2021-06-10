@@ -67,8 +67,35 @@ total.deceased<- nrow(data.covid[DECEASED==1,])
 
 general.lethality.rate<-total.deceased*100/total.cases
 
-general.lethality.rate
 ```
+
+The lethality in general in México is `r general.lethality.rate` just consider that this amount has a little point to consider. In the very beginning the mexican goverment began doing fewer COVID test than after. Even so, considering that this phenomena affected the amount of smoking and not smoking people the relation between both groups is unaffected.
+
+Now let's consider the lethality in people with tabaquism.
+
+```{r}
+total.smoking.cases<-nrow(data.covid[TABAQUISMO==1,])
+
+total.smoking.deceased<- nrow(data.covid[DECEASED==1 & TABAQUISMO==1,])
+
+smoking.lethality.rate<-total.smoking.deceased*100/total.smoking.cases
+
+```
+
+The lethality for smoking people in México is `r smoking.lethality.rate`. At very first sight the lethality in people with tabaquism is bigger, even so we most consider other correlations, mainly let´s consider obesity and compare the obesity rates between smoking and not smoking people.
+
+```{r}
+
+smoking.obesity.rate=nrow(data.covid[TABAQUISMO==1 & OBESIDAD==1,])/nrow(data.covid[TABAQUISMO==1,])
+
+nosmoking.obesity.rate=nrow(data.covid[TABAQUISMO==2 & OBESIDAD==1,])/nrow(data.covid[TABAQUISMO==2,])
+
+smoking.obesity.rate
+
+nosmoking.obesity.rate
+
+```
+
 
 
 

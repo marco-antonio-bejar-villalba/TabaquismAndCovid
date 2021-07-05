@@ -91,7 +91,7 @@ smoking.obesity.rate=nrow(data.covid[TABAQUISMO==1 & OBESIDAD==1,])/nrow(data.co
 nosmoking.obesity.rate=nrow(data.covid[TABAQUISMO==2 & OBESIDAD==1,])/nrow(data.covid[TABAQUISMO==2,])
 
 smoking.obesity.rate
-
+ 
 nosmoking.obesity.rate
 
 ```
